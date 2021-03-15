@@ -1,7 +1,7 @@
 class LibepoxyAngle < Formula
   desc "Library for handling OpenGL function pointer management"
   homepage "https://github.com/anholt/libepoxy"
-  url "git@github.com:anholt/libepoxy.git", using: :git, revision: "de08cf3479ca06ff921c584eeee6280e5a135f99"
+  url "https://github.com/anholt/libepoxy.git", using: :git, revision: "de08cf3479ca06ff921c584eeee6280e5a135f99"
   version "20210315.1"
   license "MIT"
 
