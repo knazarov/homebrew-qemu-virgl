@@ -19,3 +19,11 @@ Features:
 `brew install knazarov/qemu-virgl/qemu-virgl`
 
 Or `brew tap knazarov/qemu-virgl` and then `brew install qemu-virgl`.
+
+
+## Usage
+
+Run qemu as usual, but:
+
+- To get graphical acceleration, pass `-display cocoa,gl=es` to options
+- To get Hypervisor framework acceleration, pass `-machine accel=hvf` as well
