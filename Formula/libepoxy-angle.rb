@@ -1,7 +1,7 @@
 class LibepoxyAngle < Formula
   desc "Library for handling OpenGL function pointer management"
   homepage "https://github.com/anholt/libepoxy"
-  url "git@github.com:anholt/libepoxy.git", :using => :git, :revision => "de08cf3479ca06ff921c584eeee6280e5a135f99"
+  url "git@github.com:anholt/libepoxy.git", using: :git, revision: "de08cf3479ca06ff921c584eeee6280e5a135f99"
   version "20210315.1"
   license "MIT"
 
@@ -13,13 +13,14 @@ class LibepoxyAngle < Formula
 
   # waiting for upstreaming of https://github.com/akihikodaki/libepoxy/tree/macos
   patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/master/Patches/libepoxy-v01.diff"
+    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/338af8ba4873c62e674e3d477f9213c301bb7f14/Patches/libepoxy-v01.diff"
     sha256 "962a81b1b51a8f86739518487a441ef16863aa4ab02fde14c60b67d29d2b970b"
   end
 
   def install
     mkdir "build" do
-      system "meson", *std_meson_args, "-Dc_args=-I#{Formula["libangle"].opt_prefix}/include", "-Dc_link_args=-L#{Formula['libangle'].opt_prefix}/lib", "-Degl=yes", "-Dx11=false", ".."
+      system "meson", *std_meson_args, "-Dc_args=-I#{Formula["libangle"].opt_prefix}/include",
+             "-Dc_link_args=-L#{Formula["libangle"].opt_prefix}/lib", "-Degl=yes", "-Dx11=false", ".."
       system "ninja", "-v"
       system "ninja", "install", "-v"
     end

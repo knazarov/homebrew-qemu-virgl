@@ -1,9 +1,9 @@
 class QemuVirgl < Formula
   desc "Emulator for x86 and PowerPC"
   homepage "https://www.qemu.org/"
-  url "https://github.com/qemu/qemu.git", :using => :git, :revision => "3f8d1885e48e4d72eab0688f604de62e0aea7a38"
-  license "GPL-2.0-only"
+  url "https://github.com/qemu/qemu.git", using: :git, revision: "3f8d1885e48e4d72eab0688f604de62e0aea7a38"
   version "20210315.1"
+  license "GPL-2.0-only"
 
   depends_on "libtool" => :build
   depends_on "meson" => :build
@@ -13,6 +13,9 @@ class QemuVirgl < Formula
   depends_on "glib"
   depends_on "gnutls"
   depends_on "jpeg"
+  depends_on "knazarov/qemu-virgl/libangle"
+  depends_on "knazarov/qemu-virgl/libepoxy-angle"
+  depends_on "knazarov/qemu-virgl/virglrenderer"
   depends_on "libpng"
   depends_on "libssh"
   depends_on "libusb"
@@ -22,26 +25,22 @@ class QemuVirgl < Formula
   depends_on "pixman"
   depends_on "snappy"
   depends_on "vde"
-  depends_on "knazarov/qemu-virgl/virglrenderer"
-  depends_on "knazarov/qemu-virgl/libangle"
-  depends_on "knazarov/qemu-virgl/libepoxy-angle"
-
-  # waiting for upstreaming of https://github.com/akihikodaki/qemu/tree/macos
-  patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/master/Patches/qemu-v01.diff"
-    sha256 "fb38931582e4850c5b92f1ebcb806b0982f552051b8f1d10da640ceca680db79"
-  end
-
-
-  patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/master/Patches/qemu-edid-v01.diff"
-    sha256 "490b8ccb1f8984010a1d82c6b8fc876fe3af465e9c4e3119bbb98977e29312ca"
-  end
 
   # 820KB floppy disk image file of FreeDOS 1.2, used to test QEMU
   resource "test-image" do
     url "https://dl.bintray.com/homebrew/mirror/FD12FLOPPY.zip"
     sha256 "81237c7b42dc0ffc8b32a2f5734e3480a3f9a470c50c14a9c4576a2561a35807"
+  end
+
+  # waiting for upstreaming of https://github.com/akihikodaki/qemu/tree/macos
+  patch :p1 do
+    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/5d9d2c2795dbf6e89bbd2b1b492f0b3d68ff1e9f/Patches/qemu-v01.diff"
+    sha256 "fb38931582e4850c5b92f1ebcb806b0982f552051b8f1d10da640ceca680db79"
+  end
+
+  patch :p1 do
+    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/fa3b5dcc2f0526f0d5156f576ef831937d92f5cb/Patches/qemu-edid-v01.diff"
+    sha256 "490b8ccb1f8984010a1d82c6b8fc876fe3af465e9c4e3119bbb98977e29312ca"
   end
 
   def install
