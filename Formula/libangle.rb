@@ -1,11 +1,7 @@
-# Documentation: https://docs.brew.sh/Formula-Cookbook
-#                https://rubydoc.brew.sh/Formula
-# PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
 class Libangle < Formula
   desc ""
   homepage ""
   url "git@github.com:google/angle.git", :using => :git, :revision => "a11d65a172f885042cf4fdab5bfd124d174f5190"
-  #sha256 "3914974628485a979aef274d07634e4151d86efb6285aa06a4815cdc70864fc1"
   license ""
   version "20210315.1"
 
