@@ -1,11 +1,7 @@
-# Knazarov Qemu-virgl
+# A brew tap for qemu with support for 3d accelerated guests
 
-## How do I install these formulae?
+## Installation
 
-`brew install knazarov/qemu-virgl/<formula>`
+`brew install knazarov/qemu-virgl/qemu-virgl`
 
-Or `brew tap knazarov/qemu-virgl` and then `brew install <formula>`.
-
-## Documentation
-
-`brew help`, `man brew` or check [Homebrew's documentation](https://docs.brew.sh).
+Or `brew tap knazarov/qemu-virgl` and then `brew install qemu-virgl`.
