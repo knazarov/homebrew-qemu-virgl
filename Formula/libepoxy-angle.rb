@@ -11,6 +11,7 @@ class LibepoxyAngle < Formula
   depends_on "python@3.9" => :build
   depends_on "knazarov/qemu-virgl/libangle"
 
+  # waiting for upstreaming of https://github.com/akihikodaki/libepoxy/tree/macos
   patch :p1 do
     url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/master/Patches/libepoxy-v01.diff"
     sha256 "962a81b1b51a8f86739518487a441ef16863aa4ab02fde14c60b67d29d2b970b"
