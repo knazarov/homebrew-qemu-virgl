@@ -2,8 +2,8 @@
 #                https://rubydoc.brew.sh/Formula
 # PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
 class Virglrenderer < Formula
-  desc ""
-  homepage ""
+  desc "VirGL virtual OpenGL renderer"
+  homepage "https://gitlab.freedesktop.org/virgl/virglrenderer"
   url "https://github.com/freedesktop/virglrenderer.git", :using => :git, :revision => "d470a2df588d86fca460db889bfe5b2cce7caebb"
   license "MIT"
   version "20210315.1"
