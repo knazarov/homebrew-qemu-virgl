@@ -1,7 +1,7 @@
 class QemuVirgl < Formula
   desc "Emulator for x86 and PowerPC"
   homepage "https://www.qemu.org/"
-  url "https://github.com/akihikodaki/qemu.git", :using => :git, :revision => "3f8d1885e48e4d72eab0688f604de62e0aea7a38"
+  url "https://github.com/qemu/qemu.git", :using => :git, :revision => "3f8d1885e48e4d72eab0688f604de62e0aea7a38"
   license "GPL-2.0-only"
   version "20210315.1"
 
@@ -30,6 +30,11 @@ class QemuVirgl < Formula
   patch :p1 do
     url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/master/Patches/qemu-v01.diff"
     sha256 "fb38931582e4850c5b92f1ebcb806b0982f552051b8f1d10da640ceca680db79"
+  end
+
+  patch :p1 do
+    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/master/Patches/qemu-edid-v01.diff"
+    sha256 "490b8ccb1f8984010a1d82c6b8fc876fe3af465e9c4e3119bbb98977e29312ca"
   end
 
   # 820KB floppy disk image file of FreeDOS 1.2, used to test QEMU
