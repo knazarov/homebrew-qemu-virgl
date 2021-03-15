@@ -1,15 +1,15 @@
 class Libangle < Formula
-  desc ""
-  homepage ""
+  desc "A conformant OpenGL ES implementation for Windows, Mac, Linux, iOS and Android."
+  homepage "https://github.com/google/angle"
   url "git@github.com:google/angle.git", :using => :git, :revision => "a11d65a172f885042cf4fdab5bfd124d174f5190"
-  license ""
   version "20210315.1"
+  license "BSD-3-Clause"
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
 
   resource "depot_tools" do
-    url "https://chromium.googlesource.com/chromium/tools/depot_tools.git", :using => :git, :tag => "master"
+    url "https://chromium.googlesource.com/chromium/tools/depot_tools.git", :revision => "8e2667e04d9282b6cb24e1086a246247036393c5"
   end
 
 
