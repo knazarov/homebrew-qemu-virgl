@@ -81,7 +81,7 @@ class QemuVirgl < Formula
   end
 
   test do
-    expected = build.stable? ? version.to_s : "QEMU Project"
+    expected = "QEMU Project"
     assert_match expected, shell_output("#{bin}/qemu-system-aarch64 --version")
     assert_match expected, shell_output("#{bin}/qemu-system-alpha --version")
     assert_match expected, shell_output("#{bin}/qemu-system-arm --version")
