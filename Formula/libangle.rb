@@ -5,6 +5,11 @@ class Libangle < Formula
   version "20210315.1"
   license "BSD-3-Clause"
 
+  bottle do
+    root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/libangle-20210315.1"
+    sha256 cellar: :any, catalina: "e9aa9442083ef1eb5b3e760170d941b1ab4d8df521d97155afdf307619bd6351"
+  end
+
   depends_on "meson" => :build
   depends_on "ninja" => :build
 
