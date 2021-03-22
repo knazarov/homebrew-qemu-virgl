@@ -18,14 +18,15 @@ class LibepoxyAngle < Formula
 
   # waiting for upstreaming of https://github.com/akihikodaki/libepoxy/tree/macos
   patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/338af8ba4873c62e674e3d477f9213c301bb7f14/Patches/libepoxy-v01.diff"
-    sha256 "962a81b1b51a8f86739518487a441ef16863aa4ab02fde14c60b67d29d2b970b"
+    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/8bab5791b5af446204dea93d36943e00329032bf/Patches/libepoxy-v02.diff"
+    sha256 "8ce3a33be6ccab5482e77261d0ca98d0a6aeff9d6dfc32b0e75cd323f87dccee"
   end
 
   def install
     mkdir "build" do
       system "meson", *std_meson_args, "-Dc_args=-I#{Formula["libangle"].opt_prefix}/include",
-             "-Dc_link_args=-L#{Formula["libangle"].opt_prefix}/lib", "-Degl=yes", "-Dx11=false", ".."
+             "-Dc_link_args=-L#{Formula["libangle"].opt_prefix}/lib", "-Degl=yes", "-Dx11=false",
+             "-Dfallback-libdir=#{HOMEBREW_PREFIX}/lib", ".."
       system "ninja", "-v"
       system "ninja", "install", "-v"
     end
