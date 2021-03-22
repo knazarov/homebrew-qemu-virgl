@@ -1,0 +1,125 @@
+diff --git a/meson.build b/meson.build
+index ca37e80..fd9b578 100644
+--- a/meson.build
++++ b/meson.build
+@@ -48,6 +48,12 @@ else
+   build_egl = enable_egl == 'yes'
+ endif
+ 
++fallback_libdir = get_option('fallback-libdir')
++
++if fallback_libdir != ''
++  conf.set_quoted('FALLBACK_LIBDIR', fallback_libdir)
++endif
++
+ enable_x11 = get_option('x11')
+ if not enable_x11
+   if enable_glx == 'yes'
+@@ -165,6 +171,9 @@ endif
+ dl_dep = cc.find_library('dl', required: false)
+ gl_dep = dependency('gl', required: false)
+ egl_dep = dependency('egl', required: false)
++if not egl_dep.found()
++  egl_dep = cc.find_library('EGL', required: false)
++endif
+ 
+ # Optional dependencies for tests
+ x11_dep = dependency('x11', required: false)
+@@ -174,12 +183,12 @@ x11_dep = dependency('x11', required: false)
+ # if we fail
+ gles2_dep = dependency('glesv2', required: false)
+ if not gles2_dep.found()
+-  gles2_dep = cc.find_library('libGLESv2', required: false)
++  gles2_dep = cc.find_library('GLESv2', required: false)
+ endif
+ 
+ gles1_dep = dependency('glesv1_cm', required: false)
+ if not gles1_dep.found()
+-  gles1_dep = cc.find_library('libGLESv1_CM', required: false)
++  gles1_dep = cc.find_library('GLESv1_CM', required: false)
+ endif
+ 
+ # On windows, the DLL has to have all of its functions
+diff --git a/meson_options.txt b/meson_options.txt
+index dc30e68..0723577 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -11,6 +11,10 @@ option('egl',
+        choices: [ 'auto', 'yes', 'no' ],
+        value: 'auto',
+        description: 'Enable EGL support')
++option('fallback-libdir',
++       type: 'string',
++       value: '',
++       description: 'Fallback path to search EGL in if the default fails')
+ option('x11',
+        type: 'boolean',
+        value: true,
+diff --git a/src/dispatch_common.c b/src/dispatch_common.c
+index 62b7134..dee52b5 100644
+--- a/src/dispatch_common.c
++++ b/src/dispatch_common.c
+@@ -175,9 +175,10 @@
+ 
+ #if defined(__APPLE__)
+ #define GLX_LIB "/opt/X11/lib/libGL.1.dylib"
++#define EGL_LIB "libEGL.dylib"
+ #define OPENGL_LIB "/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL"
+-#define GLES1_LIB "libGLESv1_CM.so"
+-#define GLES2_LIB "libGLESv2.so"
++#define GLES1_LIB "libGLESv1_CM.dylib"
++#define GLES2_LIB "libGLESv2.dylib"
+ #elif defined(__ANDROID__)
+ #define GLX_LIB "libGLESv2.so"
+ #define EGL_LIB "libEGL.so"
+@@ -310,6 +311,8 @@ get_dlopen_handle(void **handle, const char *lib_name, bool exit_on_fail, bool l
+             flags |= RTLD_NOLOAD;
+ 
+         *handle = dlopen(lib_name, flags);
++
++#ifndef FALLBACK_LIBDIR
+         if (!*handle) {
+             if (exit_on_fail) {
+                 fprintf(stderr, "Couldn't open %s: %s\n", lib_name, dlerror());
+@@ -318,6 +321,28 @@ get_dlopen_handle(void **handle, const char *lib_name, bool exit_on_fail, bool l
+                 (void)dlerror();
+             }
+         }
++#else
++        if (!*handle) {
++            char *first_dlerror = strdup(dlerror());
++            char *fullpath = malloc(strlen(FALLBACK_LIBDIR) + strlen(lib_name) + 2);
++            sprintf(fullpath, "%s/%s", FALLBACK_LIBDIR, lib_name);
++
++            *handle = dlopen(fullpath, flags);
++
++            if (!*handle) {
++                if (exit_on_fail) {
++                    fprintf(stderr, "Couldn't open %s: %s\n", lib_name, first_dlerror);
++                    fprintf(stderr, "Couldn't open fallback library %s: %s\n", fullpath, dlerror());
++                    abort();
++                } else {
++                    (void)dlerror();
++                }
++            }
++
++            free(first_dlerror);
++            free(fullpath);
++        }
++#endif
+     }
+     pthread_mutex_unlock(&api.mutex);
+ #endif
+diff --git a/src/dispatch_common.h b/src/dispatch_common.h
+index a136943..55388a8 100644
+--- a/src/dispatch_common.h
++++ b/src/dispatch_common.h
+@@ -28,7 +28,7 @@
+ #define PLATFORM_HAS_GLX ENABLE_GLX
+ #define PLATFORM_HAS_WGL 1
+ #elif defined(__APPLE__)
+-#define PLATFORM_HAS_EGL 0 
++#define PLATFORM_HAS_EGL ENABLE_EGL
+ #define PLATFORM_HAS_GLX ENABLE_GLX
+ #define PLATFORM_HAS_WGL 0
+ #elif defined(ANDROID)
