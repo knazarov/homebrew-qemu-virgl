@@ -23,7 +23,114 @@ Or `brew tap knazarov/qemu-virgl` and then `brew install qemu-virgl`.
 
 ## Usage
 
-Run qemu as usual, but:
+Qemu has many command line options and emulated devices, so the
+sections are specific to your CPU (Intel/M1).
 
-- To get graphical acceleration, pass `-display cocoa,gl=es` to options
-- To get Hypervisor framework acceleration, pass `-machine accel=hvf` as well
+For the best experience, maximize the qemu window when it starts. To
+release the mouse, press `Ctrl-Alt-g`.
+
+### Usage - M1 Macs
+
+First, create a disk image you'll run your Linux installation from (tune image size as needed):
+
+```sh
+qemu-img create hdd.raw 64G
+```
+
+Download an ARM based Ubuntu image:
+
+```sh
+curl -O https://cdimage.ubuntu.com/focal/daily-live/current/focal-desktop-arm64.iso
+```
+
+Copy the firmware:
+
+```sh
+cp $(dirname $(which qemu-img))/../share/qemu/edk2-aarch64-code.fd .
+cp $(dirname $(which qemu-img))/../share/qemu/edk2-arm-vars.fd .
+```
+
+Install the system from the CD image:
+
+```sh
+qemu-system-aarch64 \
+         -machine virt,accel=hvf,highmem=off \
+         -cpu cortex-a72 -smp 2 -m 4G \
+         -device intel-hda -device hda-output \
+         -device virtio-gpu-pci \
+         -device virtio-keyboard-pci \
+         -device virtio-net-pci,netdev=net \
+         -device virtio-mouse-pci \
+         -display cocoa,gl=es \
+         -netdev user,id=net,ipv6=off \
+         -drive "if=pflash,format=raw,file=./edk2-aarch64-code.fd,readonly=on" \
+         -drive "if=pflash,format=raw,file=./edk2-arm-vars.fd,discard=on" \
+         -drive "if=virtio,format=raw,file=./hdd.raw,discard=on" \
+         -cdrom focal-desktop-arm64.iso
+```
+
+Run the system without the CD image to boot into the primary partition:
+
+```sh
+qemu-system-aarch64 \
+         -machine virt,accel=hvf,highmem=off \
+         -cpu cortex-a72 -smp 2 -m 4G \
+         -device intel-hda -device hda-output \
+         -device virtio-vga \
+         -device virtio-keyboard-pci \
+         -device virtio-net-pci,netdev=net \
+         -device virtio-mouse-pci \
+         -display cocoa,gl=es \
+         -netdev user,id=net,ipv6=off \
+         -drive "if=pflash,format=raw,file=./edk2-aarch64-code.fd,readonly=on" \
+         -drive "if=pflash,format=raw,file=./edk2-arm-vars.fd,discard=on" \
+         -drive "if=virtio,format=raw,file=./hdd.raw,discard=on"
+```
+
+
+### Usage - Intel Macs
+
+First, create a disk image you'll run your Linux installation from (tune image size as needed):
+
+```sh
+qemu-img create hdd.raw 64G
+```
+
+Download an x86 based Ubuntu image:
+
+```sh
+curl -O https://cdimage.ubuntu.com/focal/daily-live/current/focal-desktop-amd64.iso
+```
+
+Install the system from the CD image:
+
+```sh
+qemu-system-x86_64 \
+         -machine accel=hvf \
+         -cpu Haswell-v4 -smp 2 -m 4G \
+         -device intel-hda -device hda-output \
+         -device virtio-vga \
+         -device virtio-keyboard-pci \
+         -device virtio-net-pci,netdev=net \
+         -device virtio-mouse-pci \
+         -display cocoa,gl=es \
+         -netdev user,id=net,ipv6=off \
+         -drive "if=virtio,format=raw,file=hdd.raw,discard=on" \
+         -cdrom focal-desktop-amd64.iso
+```
+
+Run the system without the CD image to boot into the primary partition:
+
+```sh
+qemu-system-x86_64 \
+         -machine accel=hvf \
+         -cpu Haswell-v4 -smp 2 -m 4G \
+         -device intel-hda -device hda-output \
+         -device virtio-vga \
+         -device virtio-keyboard-pci \
+         -device virtio-net-pci,netdev=net \
+         -device virtio-mouse-pci \
+         -display cocoa,gl=es \
+         -netdev user,id=net,ipv6=off \
+         -drive "if=virtio,format=raw,file=hdd.raw,discard=on"
+```
