@@ -76,7 +76,7 @@ qemu-system-aarch64 \
          -machine virt,accel=hvf,highmem=off \
          -cpu cortex-a72 -smp 2 -m 4G \
          -device intel-hda -device hda-output \
-         -device virtio-vga \
+         -device virtio-gpu-pci \
          -device virtio-keyboard-pci \
          -device virtio-net-pci,netdev=net \
          -device virtio-mouse-pci \
