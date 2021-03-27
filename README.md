@@ -66,7 +66,8 @@ qemu-system-aarch64 \
          -drive "if=pflash,format=raw,file=./edk2-aarch64-code.fd,readonly=on" \
          -drive "if=pflash,format=raw,file=./edk2-arm-vars.fd,discard=on" \
          -drive "if=virtio,format=raw,file=./hdd.raw,discard=on" \
-         -cdrom focal-desktop-arm64.iso
+         -cdrom focal-desktop-arm64.iso \
+         -boot d
 ```
 
 Run the system without the CD image to boot into the primary partition:
@@ -116,7 +117,8 @@ qemu-system-x86_64 \
          -display cocoa,gl=es \
          -netdev user,id=net,ipv6=off \
          -drive "if=virtio,format=raw,file=hdd.raw,discard=on" \
-         -cdrom focal-desktop-amd64.iso
+         -cdrom focal-desktop-amd64.iso \
+         -boot d
 ```
 
 Run the system without the CD image to boot into the primary partition:
