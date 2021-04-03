@@ -1,7 +1,7 @@
 class QemuVirgl < Formula
   desc "Emulator for x86 and PowerPC"
   homepage "https://www.qemu.org/"
-  url "https://github.com/qemu/qemu.git", using: :git, revision: "3f8d1885e48e4d72eab0688f604de62e0aea7a38"
+  url "https://github.com/qemu/qemu.git", using: :git, revision: "571d413b5da6bc6f1c2aaca8484717642255ddb0"
   version "20210315.1"
   license "GPL-2.0-only"
 
@@ -39,8 +39,8 @@ class QemuVirgl < Formula
 
   # waiting for upstreaming of https://github.com/akihikodaki/qemu/tree/macos
   patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/5d9d2c2795dbf6e89bbd2b1b492f0b3d68ff1e9f/Patches/qemu-v01.diff"
-    sha256 "fb38931582e4850c5b92f1ebcb806b0982f552051b8f1d10da640ceca680db79"
+    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/8432ac66323b67de8c558a0d1e66bdcf133b364b/Patches/qemu-v02.diff"
+    sha256 "aee09798d2d9a1839fe495d4da2a8054c5612070c82d3d59b3ec7cfa77bafda2"
   end
 
   patch :p1 do
