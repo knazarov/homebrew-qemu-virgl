@@ -27,7 +27,11 @@ class Libangle < Formula
 
           system "python2", "scripts/bootstrap.py"
           system "gclient", "sync"
-          system "gn", "gen", "--args=use_custom_libcxx=false", "./angle_build"
+          if Hardware::CPU.arm?
+            system "gn", "gen", "--args=use_custom_libcxx=false target_cpu=\"arm64\"", "./angle_build"
+          else
+            system "gn", "gen", "--args=use_custom_libcxx=false", "./angle_build"
+          end
           system "ninja", "-C", "angle_build"
           lib.install "angle_build/libabsl.dylib"
           lib.install "angle_build/libEGL.dylib"
