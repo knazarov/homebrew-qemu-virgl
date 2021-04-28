@@ -6,8 +6,8 @@ class Virglrenderer < Formula
   license "MIT"
 
   bottle do
-    root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/virglrenderer-20210404.1"
-    sha256 cellar: :any, catalina: "fdbbae2e42aed3e05515c7fd68df45b05a04aae4a08ceca1218998353c8727e7"
+    root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/virglrenderer-20210428.1"
+    sha256 cellar: :any, catalina: "5d096a7c2df87f390b3151a178cf750948a186260dc57eeb09feb9ea507f6035"
   end
 
   depends_on "meson" => :build
