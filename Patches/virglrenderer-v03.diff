@@ -1,0 +1,395 @@
+diff --git a/meson.build b/meson.build
+index 2ccc20a..5aca90f 100644
+--- a/meson.build
++++ b/meson.build
+@@ -74,7 +74,6 @@ endforeach
+ 
+ prog_python = import('python').find_installation('python3')
+ 
+-libdrm_dep = dependency('libdrm', version : '>=2.4.50')
+ thread_dep = dependency('threads')
+ epoxy_dep = dependency('epoxy', version: '>= 1.5.4')
+ m_dep = cc.find_library('m')
+@@ -182,9 +181,12 @@ endif
+ 
+ if with_egl
+    if cc.has_header('epoxy/egl.h', dependencies: epoxy_dep) and epoxy_dep.get_pkgconfig_variable('epoxy_has_egl') == '1'
++      libdrm_dep = dependency('libdrm', required: require_egl, version : '>=2.4.50')
+       gbm_dep = dependency('gbm', version: '>= ' + _gbm_ver, required: require_egl)
+-      have_egl = gbm_dep.found()
+-      conf_data.set('HAVE_EPOXY_EGL_H', 1)
++      have_egl = libdrm_dep.found() and gbm_dep.found()
++      if have_egl
++         conf_data.set('HAVE_EPOXY_EGL_H', 1)
++      endif
+    else
+       assert(not require_egl,
+              'egl was explicitely requested but it is not supported by epoxy')
+diff --git a/src/meson.build b/src/meson.build
+index 575b7a3..118024b 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -89,7 +89,6 @@ venus_sources = [
+ virgl_depends = [
+    gallium_dep,
+    epoxy_dep,
+-   libdrm_dep,
+    thread_dep,
+    m_dep,
+ ]
+@@ -106,7 +105,7 @@ virgl_sources += vrend_sources
+ 
+ if have_egl
+    virgl_sources += vrend_winsys_egl_sources
+-   virgl_depends += [gbm_dep]
++   virgl_depends += [libdrm_dep, gbm_dep]
+ endif
+ 
+ if have_glx
+diff --git a/src/virglrenderer.c b/src/virglrenderer.c
+index 900818c..de32e79 100644
+--- a/src/virglrenderer.c
++++ b/src/virglrenderer.c
+@@ -446,8 +446,8 @@ void virgl_renderer_ctx_detach_resource(int ctx_id, int res_handle)
+    ctx->detach_resource(ctx, res);
+ }
+ 
+-int virgl_renderer_resource_get_info(int res_handle,
+-                                     struct virgl_renderer_resource_info *info)
++int virgl_renderer_borrow_texture_for_scanout(int res_handle,
++                                              struct virgl_renderer_texture_info *info)
+ {
+    TRACE_FUNC();
+    struct virgl_resource *res = virgl_resource_lookup(res_handle);
+@@ -457,8 +457,8 @@ int virgl_renderer_resource_get_info(int res_handle,
+    if (!info)
+       return EINVAL;
+ 
+-   vrend_renderer_resource_get_info(res->pipe_resource,
+-                                    (struct vrend_renderer_resource_info *)info);
++   vrend_renderer_borrow_texture_for_scanout(res->pipe_resource,
++                                             (struct vrend_renderer_texture_info *)info);
+    info->handle = res_handle;
+ 
+    if (state.winsys_initialized) {
+diff --git a/src/virglrenderer.h b/src/virglrenderer.h
+index 2fe43aa..35cd25d 100644
+--- a/src/virglrenderer.h
++++ b/src/virglrenderer.h
+@@ -240,9 +240,9 @@ VIRGL_EXPORT void virgl_renderer_ctx_detach_resource(int ctx_id, int res_handle)
+ 
+ VIRGL_EXPORT virgl_debug_callback_type virgl_set_debug_callback(virgl_debug_callback_type cb);
+ 
+-/* return information about a resource */
++/* borrow a texture for scanout */
+ 
+-struct virgl_renderer_resource_info {
++struct virgl_renderer_texture_info {
+    uint32_t handle;
+    uint32_t virgl_format;
+    uint32_t width;
+@@ -254,8 +254,8 @@ struct virgl_renderer_resource_info {
+    int drm_fourcc;
+ };
+ 
+-VIRGL_EXPORT int virgl_renderer_resource_get_info(int res_handle,
+-                                                  struct virgl_renderer_resource_info *info);
++VIRGL_EXPORT int virgl_renderer_borrow_texture_for_scanout(int res_handle,
++                                                           struct virgl_renderer_texture_info *info);
+ 
+ VIRGL_EXPORT void virgl_renderer_cleanup(void *cookie);
+ 
+diff --git a/src/vrend_blitter.h b/src/vrend_blitter.h
+index c4a7adb..94b5a45 100644
+--- a/src/vrend_blitter.h
++++ b/src/vrend_blitter.h
+@@ -31,12 +31,12 @@
+    "// Blitter\n"                               \
+ 
+ #define HEADER_GLES                             \
+-   "#version 310 es\n"                          \
++   "#version 300 es\n"                          \
+    "// Blitter\n"                               \
+    "precision mediump float;\n"                 \
+ 
+ #define HEADER_GLES_MS_ARRAY                             \
+-   "#version 310 es\n"                          \
++   "#version 300 es\n"                          \
+    "// Blitter\n"                               \
+    "#extension GL_OES_texture_storage_multisample_2d_array: require\n" \
+    "precision mediump float;\n"                 \
+diff --git a/src/vrend_formats.c b/src/vrend_formats.c
+index 6aeb2d4..df86efc 100644
+--- a/src/vrend_formats.c
++++ b/src/vrend_formats.c
+@@ -332,6 +332,8 @@ static struct vrend_format_table gl_bgra_formats[] = {
+ static struct vrend_format_table gles_bgra_formats[] = {
+   { VIRGL_FORMAT_B8G8R8X8_UNORM, GL_BGRA_EXT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, RGB1_SWIZZLE },
+   { VIRGL_FORMAT_B8G8R8A8_UNORM, GL_BGRA_EXT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NO_SWIZZLE },
++  { VIRGL_FORMAT_B8G8R8X8_SRGB,  GL_SRGB8_ALPHA8, GL_BGRA_EXT, GL_UNSIGNED_BYTE, RGB1_SWIZZLE },
++  { VIRGL_FORMAT_B8G8R8A8_SRGB,  GL_SRGB8_ALPHA8, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NO_SWIZZLE },
+ };
+ 
+ static struct vrend_format_table gles_bgra_formats_emulation[] = {
+@@ -614,24 +616,30 @@ void vrend_build_format_list_gl(void)
+ 
+ void vrend_build_format_list_gles(void)
+ {
+-  /* The BGR[A|X] formats is required but OpenGL ES does not
+-   * support rendering to it. Try to use GL_BGRA_EXT from the
+-   * GL_EXT_texture_format_BGRA8888 extension. But the
+-   * GL_BGRA_EXT format is not supported by OpenGL Desktop.
+-   */
+-  add_formats(gles_bgra_formats);
++   /* The Z32 format is required, but OpenGL ES does not support
++    * using it as a depth buffer. We just fake support with Z24
++    * and hope nobody notices.
++    */
++   add_formats(gles_z32_format);
++   add_formats(gles_bit10_formats);
++}
+ 
+-  /* The Z32 format is required, but OpenGL ES does not support
+-   * using it as a depth buffer. We just fake support with Z24
+-   * and hope nobody notices.
+-   */
+-  add_formats(gles_z32_format);
+-  add_formats(gles_bit10_formats);
++void vrend_build_format_list_gles_bgra(void)
++{
++   /* OpenGL ES only supports BGR[A|X] texture formats if the
++    * GL_EXT_texture_format_BGRA8888 extension is available and
++    * the internal format and pixel transfer format are both
++    * GL_BGRA_EXT. But the GL_BGRA_EXT format is not supported
++    * by OpenGL Desktop, so we only add these formats for GLES
++    * hosts.
++    */
++   add_formats(gles_bgra_formats);
+ }
+ 
+ void vrend_build_emulated_format_list_gles(void)
+ {
+-  add_formats(gles_bgra_formats_emulation);
++   assert(0);
++   add_formats(gles_bgra_formats_emulation);
+ }
+ 
+ /* glTexStorage may not support all that is supported by glTexImage,
+diff --git a/src/vrend_renderer.c b/src/vrend_renderer.c
+index b8b2a36..1d5e2e5 100644
+--- a/src/vrend_renderer.c
++++ b/src/vrend_renderer.c
+@@ -202,6 +202,7 @@ enum features_id
+    feat_txqs,
+    feat_ubo,
+    feat_viewport_array,
++   feat_gles_bgra,
+    feat_last,
+ };
+ 
+@@ -302,6 +303,7 @@ static const  struct {
+    FEAT(txqs, 45, UNAVAIL,  "GL_ARB_shader_texture_image_samples" ),
+    FEAT(ubo, 31, 30,  "GL_ARB_uniform_buffer_object" ),
+    FEAT(viewport_array, 41, UNAVAIL,  "GL_ARB_viewport_array", "GL_OES_viewport_array"),
++   FEAT(gles_bgra, UNAVAIL, 20, "GL_EXT_texture_format_BGRA8888"),
+ };
+ 
+ struct global_renderer_state {
+@@ -1191,6 +1193,7 @@ static inline enum virgl_formats
+ vrend_format_replace_emulated(uint32_t bind, enum virgl_formats format)
+ {
+    enum virgl_formats retval = format;
++   return format;
+ 
+    if (vrend_state.use_gles && (bind & VIRGL_BIND_PREFER_EMULATED_BGRA)) {
+       VREND_DEBUG(dbg_tweak, vrend_state.current_ctx, "Check tweak for format %s", util_format_name(format));
+@@ -2492,6 +2495,7 @@ static void vrend_hw_emit_framebuffer_state(struct vrend_sub_context *sub_ctx)
+       sub_ctx->framebuffer_srgb_enabled = use_srgb;
+    }
+ 
++#if 0 // XXX ryanneph
+    if (vrend_state.use_gles &&
+        vrend_get_tweak_is_active(&sub_ctx->tweaks, virgl_tweak_gles_brga_apply_dest_swizzle)) {
+       sub_ctx->swizzle_output_rgb_to_bgr = 0;
+@@ -2504,8 +2508,8 @@ static void vrend_hw_emit_framebuffer_state(struct vrend_sub_context *sub_ctx)
+             }
+          }
+       }
+-
+    }
++#endif
+ 
+    glDrawBuffers(sub_ctx->nr_cbufs, buffers);
+ }
+@@ -6249,6 +6253,13 @@ int vrend_renderer_init(const struct vrend_if_cbs *cbs, uint32_t flags)
+ 
+    if (vrend_state.use_gles) {
+       vrend_build_format_list_gles();
++
++      if (has_feature(feat_gles_bgra)) {
++         vrend_build_format_list_gles_bgra();
++      } else {
++         // TODO(ryanneph): add an emulation path for GLES hosts that require BGRA emulation
++         vrend_printf("WARNING: BGRA textures aren't natively supported on this GLES host (missing GL_EXT_texture_format_BGRA8888)\n");
++      }
+    } else {
+       vrend_build_format_list_gl();
+    }
+@@ -6919,6 +6930,7 @@ static enum virgl_formats vrend_resource_fixup_emulated_bgra(struct vrend_resour
+    const enum virgl_formats format = pr->format;
+    const bool format_can_texture_storage = has_feature(feat_texture_storage) &&
+          (tex_conv_table[format].flags & VIRGL_TEXTURE_CAN_TEXTURE_STORAGE);
++   return format; // XXX ryanneph
+ 
+    /* On GLES there is no support for glTexImage*DMultisample and
+     * BGRA surfaces are also unlikely to support glTexStorage2DMultisample
+@@ -10703,21 +10715,46 @@ void vrend_context_set_debug_flags(struct vrend_context *ctx, const char *flagst
+    }
+ }
+ 
+-void vrend_renderer_resource_get_info(struct pipe_resource *pres,
+-                                      struct vrend_renderer_resource_info *info)
++void vrend_renderer_borrow_texture_for_scanout(struct pipe_resource *pres,
++                                               struct vrend_renderer_texture_info *info)
+ {
+-   struct vrend_resource *res = (struct vrend_resource *)pres;
++   struct vrend_texture *tex = (struct vrend_texture *)pres;
++   const struct vrend_format_table *tex_conv =
++      vrend_get_format_table_entry_with_emulation(tex->base.base.bind, tex->base.base.format);
+    int elsize;
+ 
+-   elsize = util_format_get_blocksize(res->base.format);
++   assert(tex->base.target == GL_TEXTURE_2D);
++   assert(!util_format_is_depth_or_stencil(tex->base.base.format));
++
++   elsize = util_format_get_blocksize(tex->base.base.format);
++
++   glBindTexture(GL_TEXTURE_2D, tex->base.id);
++
++   if (tex_conv->flags & VIRGL_TEXTURE_NEED_SWIZZLE) {
++      for (unsigned i = 0; i < ARRAY_SIZE(tex->cur_swizzle); ++i) {
++         GLint next_swizzle = to_gl_swizzle(tex_conv->swizzle[i]);
++         if (tex->cur_swizzle[i] != next_swizzle) {
++            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R + i, next_swizzle);
++            tex->cur_swizzle[i] = next_swizzle;
++         }
++      }
++   }
++
++   if (tex->cur_srgb_decode != GL_DECODE_EXT && util_format_is_srgb(tex->base.base.format)) {
++      if (has_feature(feat_texture_srgb_decode)) {
++         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT,
++                         GL_DECODE_EXT);
++         tex->cur_srgb_decode = GL_DECODE_EXT;
++      }
++   }
+ 
+-   info->tex_id = res->id;
+-   info->width = res->base.width0;
+-   info->height = res->base.height0;
+-   info->depth = res->base.depth0;
+-   info->format = res->base.format;
+-   info->flags = res->y_0_top ? VIRGL_RESOURCE_Y_0_TOP : 0;
+-   info->stride = util_format_get_nblocksx(res->base.format, u_minify(res->base.width0, 0)) * elsize;
++   info->tex_id = tex->base.id;
++   info->width = tex->base.base.width0;
++   info->height = tex->base.base.height0;
++   info->depth = tex->base.base.depth0;
++   info->format = tex->base.base.format;
++   info->flags = tex->base.y_0_top ? VIRGL_RESOURCE_Y_0_TOP : 0;
++   info->stride = util_format_get_nblocksx(tex->base.base.format, u_minify(tex->base.base.width0, 0)) * elsize;
+ }
+ 
+ void vrend_renderer_get_cap_set(uint32_t cap_set, uint32_t *max_ver,
+diff --git a/src/vrend_renderer.h b/src/vrend_renderer.h
+index 55d6b94..e442f62 100644
+--- a/src/vrend_renderer.h
++++ b/src/vrend_renderer.h
+@@ -401,6 +401,7 @@ GLint64 vrend_renderer_get_timestamp(void);
+ void vrend_build_format_list_common(void);
+ void vrend_build_format_list_gl(void);
+ void vrend_build_format_list_gles(void);
++void vrend_build_format_list_gles_bgra(void);
+ void vrend_build_emulated_format_list_gles(void);
+ void vrend_check_texture_storage(struct vrend_format_table *table);
+ 
+@@ -430,7 +431,7 @@ void vrend_renderer_detach_res_ctx(struct vrend_context *ctx,
+ 
+ struct vrend_context_tweaks *vrend_get_context_tweaks(struct vrend_context *ctx);
+ 
+-struct vrend_renderer_resource_info {
++struct vrend_renderer_texture_info {
+    uint32_t handle;
+    uint32_t format;
+    uint32_t width;
+@@ -441,8 +442,8 @@ struct vrend_renderer_resource_info {
+    uint32_t stride;
+ };
+ 
+-void vrend_renderer_resource_get_info(struct pipe_resource *pres,
+-                                      struct vrend_renderer_resource_info *info);
++void vrend_renderer_borrow_texture_for_scanout(struct pipe_resource *pres,
++                                               struct vrend_renderer_texture_info *info);
+ 
+ void vrend_renderer_get_cap_set(uint32_t cap_set, uint32_t *max_ver,
+                                 uint32_t *max_size);
+diff --git a/src/vrend_winsys.c b/src/vrend_winsys.c
+index bf2d9ef..9863b57 100644
+--- a/src/vrend_winsys.c
++++ b/src/vrend_winsys.c
+@@ -22,6 +22,7 @@
+  *
+  **************************************************************************/
+ 
++#include "vrend_debug.h"
+ #include "vrend_winsys.h"
+ 
+ #ifdef HAVE_EPOXY_GLX_H
+diff --git a/src/vrend_winsys_gbm.h b/src/vrend_winsys_gbm.h
+index 84943fb..52b1544 100644
+--- a/src/vrend_winsys_gbm.h
++++ b/src/vrend_winsys_gbm.h
+@@ -25,7 +25,9 @@
+ #ifndef VIRGL_GBM_H
+ #define VIRGL_GBM_H
+ 
++#ifdef HAVE_EPOXY_EGL_H
+ #include <gbm.h>
++#endif
+ #include "vrend_iov.h"
+ #include "virglrenderer.h"
+ 
+@@ -101,6 +103,8 @@ struct virgl_gbm {
+    struct gbm_device *device;
+ };
+ 
++#ifdef HAVE_EPOXY_EGL_H
++
+ struct virgl_gbm *virgl_gbm_init(int fd);
+ 
+ void virgl_gbm_fini(struct virgl_gbm *gbm);
+@@ -124,3 +128,5 @@ bool virgl_gbm_external_allocation_preferred(uint32_t flags);
+ bool virgl_gbm_gpu_import_required(uint32_t flags);
+ 
+ #endif
++
++#endif
+diff --git a/vtest/vtest_renderer.c b/vtest/vtest_renderer.c
+index da314c6..40ed80a 100644
+--- a/vtest/vtest_renderer.c
++++ b/vtest/vtest_renderer.c
+@@ -1051,6 +1051,14 @@ static int vtest_create_resource_internal(struct vtest_context *ctx,
+       }
+    }
+ 
++   if (args->format == PIPE_FORMAT_B8G8R8A8_UNORM ||
++       args->format == PIPE_FORMAT_B8G8R8X8_UNORM ||
++       args->format == PIPE_FORMAT_B8G8R8A8_SRGB ||
++       args->format == PIPE_FORMAT_B8G8R8X8_SRGB)
++   {
++      args->bind |= VIRGL_BIND_PREFER_EMULATED_BGRA;
++   }
++
+    res = vtest_new_resource(args->handle);
+    if (!res)
+       return -ENOMEM;
