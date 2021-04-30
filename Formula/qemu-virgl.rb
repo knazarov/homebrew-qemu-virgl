@@ -2,7 +2,7 @@ class QemuVirgl < Formula
   desc "Emulator for x86 and PowerPC"
   homepage "https://www.qemu.org/"
   url "https://github.com/qemu/qemu.git", using: :git, revision: "571d413b5da6bc6f1c2aaca8484717642255ddb0"
-  version "20210403.1"
+  version "20210430.1"
   license "GPL-2.0-only"
 
   bottle do
@@ -46,6 +46,11 @@ class QemuVirgl < Formula
   patch :p1 do
     url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/fa3b5dcc2f0526f0d5156f576ef831937d92f5cb/Patches/qemu-edid-v01.diff"
     sha256 "490b8ccb1f8984010a1d82c6b8fc876fe3af465e9c4e3119bbb98977e29312ca"
+  end
+
+  patch :p1 do
+    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/c2cff9c4148e200a56be17cf88223a39924eb4dc/Patches/qemu-version-v01.diff"
+    sha256 "cffd313506ea0d05476cba9948a63a639893b684739a32eee959256b2be41778"
   end
 
   def install
