@@ -9,7 +9,7 @@ class Libangle < Formula
     root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/libangle-20210315.1"
     sha256 cellar: :any, arm64_big_sur: "0e7a61000a6c4e7f8050184c8b92a6c432f612a85e2c72d54c3888f18635fd61"
     sha256 cellar: :any, big_sur:       "032ffcba856c6b16b07edc1156100b943dc1322df4e61da8620edbd503957ef9"
-    sha256 cellar: :any, catalina:      "032ffcba856c6b16b07edc1156100b943dc1322df4e61da8620edbd503957ef9"
+    sha256 cellar: :any, catalina:      "e9aa9442083ef1eb5b3e760170d941b1ab4d8df521d97155afdf307619bd6351"
   end
 
   depends_on "meson" => :build
