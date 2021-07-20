@@ -1,0 +1,13 @@
+diff --git a/ui/egl-helpers.c b/ui/egl-helpers.c
+index 6d0cb2b5cb..94e843272d 100644
+--- a/ui/egl-helpers.c
++++ b/ui/egl-helpers.c
+@@ -462,7 +462,7 @@ EGLContext qemu_egl_init_ctx(void)
+         EGL_NONE
+     };
+     static const EGLint ctx_att_gles[] = {
+-        EGL_CONTEXT_CLIENT_VERSION, 2,
++        EGL_CONTEXT_CLIENT_VERSION, 3,
+         EGL_NONE
+     };
+     bool gles = (qemu_egl_mode == DISPLAYGL_MODE_ES);
