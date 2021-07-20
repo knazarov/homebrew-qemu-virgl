@@ -1,8 +1,8 @@
 class QemuVirgl < Formula
   desc "Emulator for x86 and PowerPC"
   homepage "https://www.qemu.org/"
-  url "https://github.com/qemu/qemu.git", using: :git, revision: "d90f154867ec0ec22fd719164b88716e8fd48672"
-  version "20210507.1"
+  url "https://github.com/qemu/qemu.git", using: :git, revision: "2fa4ad3f9000c385f71237984fdd1eefe2a91900"
+  version "20210725.1"
   license "GPL-2.0-only"
 
   bottle do
@@ -39,13 +39,8 @@ class QemuVirgl < Formula
 
   # waiting for upstreaming of https://github.com/akihikodaki/qemu/tree/macos
   patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/35703a784e58e9700f79766637b0af966aee9bfe/Patches/qemu-v03.diff"
-    sha256 "c98236ef200220e235665addfcc4c8c708bd72ff27ae09ff15ec29173dbd780f"
-  end
-
-  patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/fa3b5dcc2f0526f0d5156f576ef831937d92f5cb/Patches/qemu-edid-v01.diff"
-    sha256 "490b8ccb1f8984010a1d82c6b8fc876fe3af465e9c4e3119bbb98977e29312ca"
+    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/8f364ec918c177cb5e72602f263fe0061066eea0/Patches/qemu-v04.diff"
+    sha256 "5301b861cf17486043d212a4385280e0aa6dada9453bbe66c2db47c6299155e7"
   end
 
   def install
@@ -100,7 +95,6 @@ class QemuVirgl < Formula
     assert_match expected, shell_output("#{bin}/qemu-system-mips64 --version")
     assert_match expected, shell_output("#{bin}/qemu-system-mips64el --version")
     assert_match expected, shell_output("#{bin}/qemu-system-mipsel --version")
-    assert_match expected, shell_output("#{bin}/qemu-system-moxie --version")
     assert_match expected, shell_output("#{bin}/qemu-system-nios2 --version")
     assert_match expected, shell_output("#{bin}/qemu-system-or1k --version")
     assert_match expected, shell_output("#{bin}/qemu-system-ppc --version")
