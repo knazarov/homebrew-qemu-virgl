@@ -31,6 +31,8 @@ release the mouse, press `Ctrl-Alt-g`.
 
 ### Usage - M1 Macs
 
+**Latest release needs virtio-gpu-gl-pci command line option instead of virtio-gpu-pci, otherwise gpu acceleration won't work**
+
 First, create a disk image you'll run your Linux installation from (tune image size as needed):
 
 ```sh
@@ -58,7 +60,7 @@ qemu-system-aarch64 \
          -cpu cortex-a72 -smp 2 -m 4G \
          -device intel-hda -device hda-output \
          -device qemu-xhci \
-         -device virtio-gpu-pci \
+         -device virtio-gpu-gl-pci \
          -device usb-kbd \
          -device virtio-net-pci,netdev=net \
          -device virtio-mouse-pci \
@@ -79,7 +81,7 @@ qemu-system-aarch64 \
          -cpu cortex-a72 -smp 2 -m 4G \
          -device intel-hda -device hda-output \
          -device qemu-xhci \
-         -device virtio-gpu-pci \
+         -device virtio-gpu-gl-pci \
          -device usb-kbd \
          -device virtio-net-pci,netdev=net \
          -device virtio-mouse-pci \
