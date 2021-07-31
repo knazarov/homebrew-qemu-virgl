@@ -57,8 +57,9 @@ qemu-system-aarch64 \
          -machine virt,accel=hvf,highmem=off \
          -cpu cortex-a72 -smp 2 -m 4G \
          -device intel-hda -device hda-output \
+         -device qemu-xhci \
          -device virtio-gpu-pci \
-         -device virtio-keyboard-pci \
+         -device usb-kbd \
          -device virtio-net-pci,netdev=net \
          -device virtio-mouse-pci \
          -display cocoa,gl=es \
@@ -77,8 +78,9 @@ qemu-system-aarch64 \
          -machine virt,accel=hvf,highmem=off \
          -cpu cortex-a72 -smp 2 -m 4G \
          -device intel-hda -device hda-output \
+         -device qemu-xhci \
          -device virtio-gpu-pci \
-         -device virtio-keyboard-pci \
+         -device usb-kbd \
          -device virtio-net-pci,netdev=net \
          -device virtio-mouse-pci \
          -display cocoa,gl=es \
@@ -110,8 +112,9 @@ qemu-system-x86_64 \
          -machine accel=hvf \
          -cpu Haswell-v4 -smp 2 -m 4G \
          -device intel-hda -device hda-output \
+         -device qemu-xhci \
          -device virtio-vga \
-         -device virtio-keyboard-pci \
+         -device usb-kbd \
          -device virtio-net-pci,netdev=net \
          -device virtio-mouse-pci \
          -display cocoa,gl=es \
@@ -128,8 +131,9 @@ qemu-system-x86_64 \
          -machine accel=hvf \
          -cpu Haswell-v4 -smp 2 -m 4G \
          -device intel-hda -device hda-output \
+         -device qemu-xhci \
          -device virtio-vga \
-         -device virtio-keyboard-pci \
+         -device usb-kbd \
          -device virtio-net-pci,netdev=net \
          -device virtio-mouse-pci \
          -display cocoa,gl=es \
