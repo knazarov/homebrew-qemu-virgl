@@ -1,0 +1,13 @@
+diff --git a/hw/usb/meson.build b/hw/usb/meson.build
+index 3ca6127937..de853d780d 100644
+--- a/hw/usb/meson.build
++++ b/hw/usb/meson.build
+@@ -72,7 +72,7 @@ if usbredir.found()
+ endif
+ 
+ # usb pass-through
+-if config_host.has_key('CONFIG_USB_LIBUSB')
++if libusb.found()
+   usbhost_ss = ss.source_set()
+   usbhost_ss.add(when: ['CONFIG_USB', libusb],
+                  if_true: files('host-libusb.c'))
