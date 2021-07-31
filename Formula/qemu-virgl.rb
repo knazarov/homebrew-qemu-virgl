@@ -6,8 +6,8 @@ class QemuVirgl < Formula
   license "GPL-2.0-only"
 
   bottle do
-    root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/qemu-virgl-20210507.1"
-    sha256 catalina: "4044b9eeb7cf6e4f044644b4edad2bd2cedb47faaf38499fd49110647ac9823a"
+    root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/qemu-virgl-20210725.1"
+    sha256 catalina: "1595106e66d077939eaab4a36aadf6ff6371caa29a854a0e0c655506d92ecddc"
   end
 
   depends_on "libtool" => :build
