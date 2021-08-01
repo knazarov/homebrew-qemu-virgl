@@ -43,6 +43,11 @@ class QemuVirgl < Formula
     sha256 "5301b861cf17486043d212a4385280e0aa6dada9453bbe66c2db47c6299155e7"
   end
 
+  patch :p1 do
+    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/18e6df670467c9d2cd2ec18375f4539cd6105028/Patches/qemu-libusb-v01.diff"
+    sha256 "2da15abeb2a8f859e7f2fae359ff5ded72ffa49c8db6bf4d90115fd1f5e01f22"
+  end
+
   def install
     ENV["LIBTOOL"] = "glibtool"
 
