@@ -142,3 +142,28 @@ qemu-system-x86_64 \
          -netdev user,id=net,ipv6=off \
          -drive "if=virtio,format=raw,file=hdd.raw,discard=on"
 ```
+
+
+## Usage - Advanced
+
+This section has additional configuration you may want to do to improve your workflow
+
+
+### Clipboard sharing
+
+There's now support for sharing clipboard in both directions: from vm->host and host->vm. To enable clibpoard sharing, add this to your command line:
+
+```
+         -chardev qemu-vdagent,id=spice,name=vdagent,clipboard=on \
+         -device virtio-serial-pci \
+         -device virtserialport,chardev=spice,name=com.redhat.spice.0
+```
+
+### Mouse integration
+
+By default, you have mouse pointer capture and have to release mouse pointer from the VM using keyboard shortcut. In order to have seamless mouse configuration,
+add the following to your command line instead of `-device virtio-mouse-pci`:
+
+```
+	-device usb-tablet \
+```
