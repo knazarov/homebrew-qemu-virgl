@@ -167,3 +167,45 @@ add the following to your command line instead of `-device virtio-mouse-pci`:
 ```
 	-device usb-tablet \
 ```
+
+### MacOS native networking for VMs (vmnet)
+
+akihikodaki's patch set includes support for vmnet which offers more flexibility than `-netdev user`, and allows higher network throughput. (see https://github.com/akihikodaki/qemu/commit/72a35bb6e0a16bb7d346ba822a6d47293915fc95).
+
+For instance, to enable bridge mode, replace:
+
+```
+    -device virtio-net-pci,netdev=net \
+    -netdev user,id=net,ipv6=off \
+```
+
+with
+
+
+```
+    -netdev vmnet-macos,id=n1,mode=bridged,ifname=en0 \
+    -device virtio-net,netdev=n1 \
+```
+
+vmnet also offers "host" and "shared" networking model:
+
+```
+   -netdev vmnet-macos,id=str,mode=host|shared[,dhcp_start_address=addr,dhcp_end_address=addr,dhcp_subnet_mask=mask]
+```
+
+***caveats:***
+
+1) vmnet requires running qemu as root, for now.
+2) current vmnet API (Apple) doesn't support setting MAC address, so it will be randomized every time the VM is started.
+
+To work around 2), for now it's possible to set the MAC address within the VM.
+
+As root, create a file `/etc/udev/rules.d/75-mac-vmnet.rules` with the following content:
+
+```
+ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp0s3", RUN+="/usr/bin/ip link set dev %k address 00:11:22:33:44:55"
+```
+
+replace `enp0s3` with the name of your interface and `00:11:22:33:44:55` with the desired MAC address.
+
+Reboot or issue a `ip link set dev enp0s3 address 00:11:22:33:44:55` to change your MAC address.
