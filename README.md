@@ -115,7 +115,7 @@ qemu-system-x86_64 \
          -cpu Haswell-v4 -smp 2 -m 4G \
          -device intel-hda -device hda-output \
          -device qemu-xhci \
-         -device virtio-vga \
+         -device virtio-vga-gl \
          -device usb-kbd \
          -device virtio-net-pci,netdev=net \
          -device virtio-mouse-pci \
@@ -134,7 +134,7 @@ qemu-system-x86_64 \
          -cpu Haswell-v4 -smp 2 -m 4G \
          -device intel-hda -device hda-output \
          -device qemu-xhci \
-         -device virtio-vga \
+         -device virtio-vga-gl \
          -device usb-kbd \
          -device virtio-net-pci,netdev=net \
          -device virtio-mouse-pci \
