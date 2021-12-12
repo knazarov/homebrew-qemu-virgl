@@ -5,11 +5,6 @@ class LibepoxyAngle < Formula
   version "20210315.1"
   license "MIT"
 
-  bottle do
-    root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/libepoxy-angle-20210315.1"
-    sha256 cellar: :any, catalina: "dea2eb521c6e2bec397e74c78d31c6268f7a590c9407c1d4967e8b6c5fa23a6f"
-  end
-
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build

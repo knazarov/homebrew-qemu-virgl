@@ -5,11 +5,6 @@ class Virglrenderer < Formula
   version "20211212.1"
   license "MIT"
 
-  bottle do
-    root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/virglrenderer-20210428.1"
-    sha256 cellar: :any, catalina: "5d096a7c2df87f390b3151a178cf750948a186260dc57eeb09feb9ea507f6035"
-  end
-
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
