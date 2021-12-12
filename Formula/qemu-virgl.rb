@@ -1,8 +1,8 @@
 class QemuVirgl < Formula
   desc "Emulator for x86 and PowerPC"
   homepage "https://www.qemu.org/"
-  url "https://github.com/qemu/qemu.git", using: :git, revision: "2fa4ad3f9000c385f71237984fdd1eefe2a91900"
-  version "20210725.1"
+  url "https://github.com/qemu/qemu.git", using: :git, revision: "99fc08366b06282614daeda989d2fde6ab8a707f"
+  version "20211212.1"
   license "GPL-2.0-only"
 
   bottle do
@@ -40,13 +40,8 @@ class QemuVirgl < Formula
 
   # waiting for upstreaming of https://github.com/akihikodaki/qemu/tree/macos
   patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/8f364ec918c177cb5e72602f263fe0061066eea0/Patches/qemu-v04.diff"
-    sha256 "5301b861cf17486043d212a4385280e0aa6dada9453bbe66c2db47c6299155e7"
-  end
-
-  patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/18e6df670467c9d2cd2ec18375f4539cd6105028/Patches/qemu-libusb-v01.diff"
-    sha256 "2da15abeb2a8f859e7f2fae359ff5ded72ffa49c8db6bf4d90115fd1f5e01f22"
+    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/87072b7ccc07f5087bf0848fa8920f8b3f8d5a47/Patches/qemu-v05.diff"
+    sha256 "6d27699ba454b5ecb7411822a745b89dce3dea5fccabfb56c84ad698f3222dd4"
   end
 
   def install
@@ -80,9 +75,7 @@ class QemuVirgl < Formula
     # Samba installations from external taps.
     args << "--smbd=#{HOMEBREW_PREFIX}/sbin/samba-dot-org-smbd"
 
-    on_macos do
-      args << "--enable-cocoa"
-    end
+    args << "--enable-cocoa" if OS.mac?
 
     system "./configure", *args
     system "make", "V=1", "install"
