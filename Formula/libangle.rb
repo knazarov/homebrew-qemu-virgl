@@ -1,8 +1,8 @@
 class Libangle < Formula
   desc "Conformant OpenGL ES implementation for Windows, Mac, Linux, iOS and Android"
   homepage "https://github.com/google/angle"
-  url "https://github.com/google/angle.git", using: :git, revision: "a11d65a172f885042cf4fdab5bfd124d174f5190"
-  version "20210315.1"
+  url "https://github.com/google/angle.git", using: :git, revision: "df0f7133799ca6aa0d31802b22d919c6197051cf"
+  version "20211212.1"
   license "BSD-3-Clause"
 
   bottle do
@@ -16,7 +16,7 @@ class Libangle < Formula
   depends_on "ninja" => :build
 
   resource "depot_tools" do
-    url "https://chromium.googlesource.com/chromium/tools/depot_tools.git", revision: "8e2667e04d9282b6cb24e1086a246247036393c5"
+    url "https://chromium.googlesource.com/chromium/tools/depot_tools.git", revision: "dc86a4b9044f9243886ca0da0c1753820ac51f45"
   end
 
   def install
@@ -29,9 +29,9 @@ class Libangle < Formula
           system "python2", "scripts/bootstrap.py"
           system "gclient", "sync"
           if Hardware::CPU.arm?
-            system "gn", "gen", "--args=use_custom_libcxx=false target_cpu=\"arm64\"", "./angle_build"
+            system "gn", "gen", "--args=use_custom_libcxx=false target_cpu=\"arm64\" treat_warnings_as_errors=false", "./angle_build"
           else
-            system "gn", "gen", "--args=use_custom_libcxx=false", "./angle_build"
+            system "gn", "gen", "--args=use_custom_libcxx=false treat_warnings_as_errors=false", "./angle_build"
           end
           system "ninja", "-C", "angle_build"
           lib.install "angle_build/libabsl.dylib"
