@@ -7,6 +7,7 @@ class Libangle < Formula
 
   bottle do
     root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/libangle-20211212.1"
+    sha256 cellar: :any, arm64_big_sur: "6e776fc996fa02df211ee7e79512d4996558447bde65a63d2c7578ed1f63f660"
     sha256 cellar: :any, big_sur: "1c201f77bb6d877f2404ec761e47e13b97a3d61dff7ddfc484caa3deae4e5c1b"
   end
 
