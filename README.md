@@ -39,10 +39,10 @@ First, create a disk image you'll run your Linux installation from (tune image s
 qemu-img create hdd.raw 64G
 ```
 
-Download an ARM based Fedora 34 image:
+Download an ARM based Fedora 35 image:
 
 ```sh
-curl -LO https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Workstation/aarch64/iso/Fedora-Workstation-Live-aarch64-34-1.2.iso
+curl -LO https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/35/Workstation/aarch64/iso/Fedora-Workstation-Live-aarch64-35-1.2.iso
 ```
 
 Copy the firmware:
@@ -69,7 +69,7 @@ qemu-system-aarch64 \
          -drive "if=pflash,format=raw,file=./edk2-aarch64-code.fd,readonly=on" \
          -drive "if=pflash,format=raw,file=./edk2-arm-vars.fd,discard=on" \
          -drive "if=virtio,format=raw,file=./hdd.raw,discard=on" \
-         -cdrom Fedora-Workstation-Live-aarch64-34-1.2.iso \
+         -cdrom Fedora-Workstation-Live-aarch64-35-1.2.iso \
          -boot d
 ```
 
@@ -101,10 +101,10 @@ First, create a disk image you'll run your Linux installation from (tune image s
 qemu-img create hdd.raw 64G
 ```
 
-Download an x86 based Fedora 34 image:
+Download an x86 based Fedora 35 image:
 
 ```sh
-curl -LO https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Workstation/x86_64/iso/Fedora-Workstation-Live-x86_64-34-1.2.iso
+curl -LO https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/35/Workstation/x86_64/iso/Fedora-Workstation-Live-x86_64-35-1.2.iso
 ```
 
 Install the system from the CD image:
@@ -122,7 +122,7 @@ qemu-system-x86_64 \
          -display cocoa,gl=es \
          -netdev user,id=net,ipv6=off \
          -drive "if=virtio,format=raw,file=hdd.raw,discard=on" \
-         -cdrom Fedora-Workstation-Live-x86_64-34-1.2.iso \
+         -cdrom Fedora-Workstation-Live-x86_64-35-1.2.iso \
          -boot d
 ```
 
