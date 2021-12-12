@@ -6,10 +6,8 @@ class Libangle < Formula
   license "BSD-3-Clause"
 
   bottle do
-    root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/libangle-20210315.1"
-    sha256 cellar: :any, arm64_big_sur: "0e7a61000a6c4e7f8050184c8b92a6c432f612a85e2c72d54c3888f18635fd61"
-    sha256 cellar: :any, big_sur:       "e9aa9442083ef1eb5b3e760170d941b1ab4d8df521d97155afdf307619bd6351"
-    sha256 cellar: :any, catalina:      "e9aa9442083ef1eb5b3e760170d941b1ab4d8df521d97155afdf307619bd6351"
+    root_url "https://github.com/knazarov/homebrew-qemu-virgl/releases/download/libangle-20211212.1"
+    sha256 cellar: :any, big_sur: "1c201f77bb6d877f2404ec761e47e13b97a3d61dff7ddfc484caa3deae4e5c1b"
   end
 
   depends_on "meson" => :build
