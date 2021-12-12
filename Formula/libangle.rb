@@ -29,7 +29,9 @@ class Libangle < Formula
           system "python2", "scripts/bootstrap.py"
           system "gclient", "sync"
           if Hardware::CPU.arm?
-            system "gn", "gen", "--args=use_custom_libcxx=false target_cpu=\"arm64\" treat_warnings_as_errors=false", "./angle_build"
+            system "gn", "gen", \
+              "--args=use_custom_libcxx=false target_cpu=\"arm64\" treat_warnings_as_errors=false", \
+              "./angle_build"
           else
             system "gn", "gen", "--args=use_custom_libcxx=false treat_warnings_as_errors=false", "./angle_build"
           end
