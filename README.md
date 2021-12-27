@@ -183,14 +183,15 @@ with
 
 
 ```
-    -netdev vmnet-macos,id=n1,mode=bridged,ifname=en0 \
-    -device virtio-net,netdev=n1 \
+    -netdev vmnet-bridged,id=net0,ifname=en0 \
+    -device virtio-net,netdev=net0 \
 ```
 
 vmnet also offers "host" and "shared" networking model:
 
 ```
-   -netdev vmnet-macos,id=str,mode=host|shared[,dhcp_start_address=addr,dhcp_end_address=addr,dhcp_subnet_mask=mask]
+   -netdev vmnet-host,id=str[,isolated=on|off][,net-uuid=uuid][,start-address=addr,end-address=addr,subnet-mask=mask]
+   -netdev vmnet-shared,id=str[,isolated=on|off][,nat66-prefix=addr][,start-address=addr,end-address=addr,subnet-mask=mask]
 ```
 
 ***caveats:***
