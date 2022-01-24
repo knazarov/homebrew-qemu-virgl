@@ -36,7 +36,7 @@ release the mouse, press `Ctrl-Alt-g`.
 First, create a disk image you'll run your Linux installation from (tune image size as needed):
 
 ```sh
-qemu-img create hdd.raw 64G
+qemu-img create -f qcow2 hdd.qcow2 64G
 ```
 
 Download an ARM based Fedora 35 image:
@@ -68,7 +68,7 @@ qemu-system-aarch64 \
          -netdev user,id=net,ipv6=off \
          -drive "if=pflash,format=raw,file=./edk2-aarch64-code.fd,readonly=on" \
          -drive "if=pflash,format=raw,file=./edk2-arm-vars.fd,discard=on" \
-         -drive "if=virtio,format=raw,file=./hdd.raw,discard=on" \
+         -drive "if=virtio,format=qcow2,file=./hdd.qcow2,discard=on" \
          -cdrom Fedora-Workstation-Live-aarch64-35-1.2.iso \
          -boot d
 ```
@@ -89,7 +89,7 @@ qemu-system-aarch64 \
          -netdev user,id=net,ipv6=off \
          -drive "if=pflash,format=raw,file=./edk2-aarch64-code.fd,readonly=on" \
          -drive "if=pflash,format=raw,file=./edk2-arm-vars.fd,discard=on" \
-         -drive "if=virtio,format=raw,file=./hdd.raw,discard=on"
+         -drive "if=virtio,format=qcow2,file=./hdd.qcow2,discard=on"
 ```
 
 
@@ -98,7 +98,7 @@ qemu-system-aarch64 \
 First, create a disk image you'll run your Linux installation from (tune image size as needed):
 
 ```sh
-qemu-img create hdd.raw 64G
+qemu-img create -f qcow2 hdd.qcow2 64G
 ```
 
 Download an x86 based Fedora 35 image:
@@ -121,7 +121,7 @@ qemu-system-x86_64 \
          -device virtio-mouse-pci \
          -display cocoa,gl=es \
          -netdev user,id=net,ipv6=off \
-         -drive "if=virtio,format=raw,file=hdd.raw,discard=on" \
+         -drive "if=virtio,format=qcow2,file=hdd.qcow2,discard=on" \
          -cdrom Fedora-Workstation-Live-x86_64-35-1.2.iso \
          -boot d
 ```
@@ -140,7 +140,7 @@ qemu-system-x86_64 \
          -device virtio-mouse-pci \
          -display cocoa,gl=es \
          -netdev user,id=net,ipv6=off \
-         -drive "if=virtio,format=raw,file=hdd.raw,discard=on"
+         -drive "if=virtio,format=qcow2,file=hdd.qcow2,discard=on"
 ```
 
 
