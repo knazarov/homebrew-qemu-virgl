@@ -1,8 +1,9 @@
 class LibepoxyAngle < Formula
   desc "Library for handling OpenGL function pointer management"
   homepage "https://github.com/anholt/libepoxy"
-  url "https://github.com/anholt/libepoxy.git", using: :git, revision: "de08cf3479ca06ff921c584eeee6280e5a135f99"
-  version "20210315.1"
+  # waiting for upstreaming of https://github.com/akihikodaki/libepoxy/tree/macos
+  url "https://github.com/akihikodaki/libepoxy.git", using: :git, revision: "ec54e0ff95dd98cd5d5c62b38d9ae427e4e6e747"
+  version "20211208.1"
   license "MIT"
 
   depends_on "meson" => :build
@@ -10,12 +11,6 @@ class LibepoxyAngle < Formula
   depends_on "pkg-config" => :build
   depends_on "python@3.9" => :build
   depends_on "akirakyle/qemu-virgl/libangle"
-
-  # waiting for upstreaming of https://github.com/akihikodaki/libepoxy/tree/macos
-  patch :p1 do
-    url "https://raw.githubusercontent.com/akirakyle/homebrew-qemu-virgl/8bab5791b5af446204dea93d36943e00329032bf/Patches/libepoxy-v02.diff"
-    sha256 "8ce3a33be6ccab5482e77261d0ca98d0a6aeff9d6dfc32b0e75cd323f87dccee"
-  end
 
   def install
     mkdir "build" do

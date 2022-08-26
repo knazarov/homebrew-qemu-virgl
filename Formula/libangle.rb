@@ -1,8 +1,8 @@
 class Libangle < Formula
   desc "Conformant OpenGL ES implementation for Windows, Mac, Linux, iOS and Android"
   homepage "https://github.com/google/angle"
-  url "https://github.com/google/angle.git", using: :git, revision: "df0f7133799ca6aa0d31802b22d919c6197051cf"
-  version "20211212.1"
+  url "https://github.com/google/angle.git", using: :git, revision: "4a65a669e11bd7bfa9d77cbf7001836379ec29b5"
+  version "20220804.1"
   license "BSD-3-Clause"
 
   bottle do
@@ -15,7 +15,7 @@ class Libangle < Formula
   depends_on "ninja" => :build
 
   resource "depot_tools" do
-    url "https://chromium.googlesource.com/chromium/tools/depot_tools.git", revision: "dc86a4b9044f9243886ca0da0c1753820ac51f45"
+    url "https://chromium.googlesource.com/chromium/tools/depot_tools.git", revision: "138bff2823590b3f3db440425bf712392defb7de"
   end
 
   def install

@@ -1,8 +1,9 @@
 class QemuVirgl < Formula
   desc "Emulator for x86 and PowerPC"
   homepage "https://www.qemu.org/"
-  url "https://github.com/qemu/qemu.git", using: :git, revision: "99fc08366b06282614daeda989d2fde6ab8a707f"
-  version "20211212.1"
+  # waiting for upstreaming of https://github.com/akihikodaki/qemu/tree/macos
+  url "https://github.com/akihikodaki/qemu.git", using: :git, revision: "4d2563def3e26482c6b1ff8ab38c31eea8373890"
+  version "20220226.1"
   license "GPL-2.0-only"
 
   depends_on "libtool" => :build
@@ -31,12 +32,6 @@ class QemuVirgl < Formula
   resource "test-image" do
     url "https://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/distributions/1.2/FD12FLOPPY.zip"
     sha256 "81237c7b42dc0ffc8b32a2f5734e3480a3f9a470c50c14a9c4576a2561a35807"
-  end
-
-  # waiting for upstreaming of https://github.com/akihikodaki/qemu/tree/macos
-  patch :p1 do
-    url "https://raw.githubusercontent.com/akirakyle/homebrew-qemu-virgl/87072b7ccc07f5087bf0848fa8920f8b3f8d5a47/Patches/qemu-v05.diff"
-    sha256 "6d27699ba454b5ecb7411822a745b89dce3dea5fccabfb56c84ad698f3222dd4"
   end
 
   def install
