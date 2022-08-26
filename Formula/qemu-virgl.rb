@@ -11,12 +11,12 @@ class QemuVirgl < Formula
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
 
-  depends_on "glib"
-  depends_on "gnutls"
-  depends_on "jpeg"
   depends_on "akirakyle/qemu-virgl/libangle"
   depends_on "akirakyle/qemu-virgl/libepoxy-angle"
   depends_on "akirakyle/qemu-virgl/virglrenderer"
+  depends_on "glib"
+  depends_on "gnutls"
+  depends_on "jpeg"
   depends_on "libpng"
   depends_on "libssh"
   depends_on "libusb"
