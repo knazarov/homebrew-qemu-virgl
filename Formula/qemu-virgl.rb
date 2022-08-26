@@ -13,9 +13,9 @@ class QemuVirgl < Formula
   depends_on "glib"
   depends_on "gnutls"
   depends_on "jpeg"
-  depends_on "knazarov/qemu-virgl/libangle"
-  depends_on "knazarov/qemu-virgl/libepoxy-angle"
-  depends_on "knazarov/qemu-virgl/virglrenderer"
+  depends_on "akirakyle/qemu-virgl/libangle"
+  depends_on "akirakyle/qemu-virgl/libepoxy-angle"
+  depends_on "akirakyle/qemu-virgl/virglrenderer"
   depends_on "libpng"
   depends_on "libssh"
   depends_on "libusb"
@@ -35,7 +35,7 @@ class QemuVirgl < Formula
 
   # waiting for upstreaming of https://github.com/akihikodaki/qemu/tree/macos
   patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/87072b7ccc07f5087bf0848fa8920f8b3f8d5a47/Patches/qemu-v05.diff"
+    url "https://raw.githubusercontent.com/akirakyle/homebrew-qemu-virgl/87072b7ccc07f5087bf0848fa8920f8b3f8d5a47/Patches/qemu-v05.diff"
     sha256 "6d27699ba454b5ecb7411822a745b89dce3dea5fccabfb56c84ad698f3222dd4"
   end
 

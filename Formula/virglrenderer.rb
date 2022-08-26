@@ -8,12 +8,12 @@ class Virglrenderer < Formula
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
-  depends_on "knazarov/qemu-virgl/libangle"
-  depends_on "knazarov/qemu-virgl/libepoxy-angle"
+  depends_on "akirakyle/qemu-virgl/libangle"
+  depends_on "akirakyle/qemu-virgl/libepoxy-angle"
 
   # waiting for upstreaming of https://github.com/akihikodaki/virglrenderer/tree/macos
   patch :p1 do
-    url "https://raw.githubusercontent.com/knazarov/homebrew-qemu-virgl/d8e807a58717d551ecb73a6e721e49559cec1a3d/Patches/virglrenderer-v04.diff"
+    url "https://raw.githubusercontent.com/akirakyle/homebrew-qemu-virgl/d8e807a58717d551ecb73a6e721e49559cec1a3d/Patches/virglrenderer-v04.diff"
     sha256 "cb9e2ea4d73cd99375bd9fc9a008f4d7e53249a6259d63ff8f367a08c4fd8b9c"
   end
 
